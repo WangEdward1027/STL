@@ -1,3 +1,5 @@
+//String类的实现1
+
 #include <string.h>
 #include <iostream> 
 using std::cout;
@@ -10,9 +12,8 @@ class String
 public:
     //无参构造
     String()
-    :_pstr(new char[1])
+    :_pstr(new char[1]()) //申请一个字节空间,并用()初始化为'\0'
     {
-        _pstr[0] = '\0';
         cout << "String()" << endl;
     }
 
@@ -34,13 +35,13 @@ public:
 
     //赋值运算符函数
     String &operator=(const String &rhs){
-        cout << "String &operator=(const String &rhs)" << endl;
-        if(this != &rhs){
-            delete [] _pstr;
-            _pstr = new char[strlen(rhs._pstr) + 1]();
-            strcpy(_pstr, rhs._pstr);
+        if(this != &rhs){   //1.判断是否是自复制
+            delete [] _pstr; //2.回收左操作数管理的堆空间
+            _pstr = new char[strlen(rhs._pstr) + 1](); //3.深拷贝
+            strcpy(_pstr, rhs._pstr);    //以及其他数据成员的拷贝
         }
-        return *this;
+        return *this;   //4.返回本对象
+        cout << "String &operator=(const String &rhs)" << endl;
     }
 
     //析构函数
