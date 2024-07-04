@@ -99,12 +99,20 @@ String & String::operator=(const char * pstr){
 }
 
 String & String::operator+=(const String & rhs){
-    strcat(_pstr,rhs._pstr);
+    char * str = new char[strlen(_pstr) + strlen(rhs._pstr) +1]();
+    strcpy(str,_pstr);
+    strcat(str,rhs._pstr);
+    delete [] _pstr;
+    _pstr = str;
     return *this;
 }
 
 String & String::operator+=(const char * pstr){
-    strcat(_pstr, pstr);
+    char * str = new char[strlen(_pstr) + strlen(pstr) + 1];
+    strcpy(str,_pstr);
+    strcat(str,pstr);
+    delete [] _pstr;
+    _pstr  = str;
     return *this;
 }
 
@@ -227,8 +235,16 @@ void test(){
     cout << endl;
 }
 
+void test2(){
+    String str1 = "h";
+    str1 += str1;
+    str1 += str1;
+    str1 += str1;
+    cout << str1 << endl;
+}
+
 int main()
 {
-    test();       
+    test2();       
     return 0;
 }
