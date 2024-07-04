@@ -1,4 +1,4 @@
-//String类的实现1
+//string类的模拟实现1
 
 #include <string.h>
 #include <iostream> 
