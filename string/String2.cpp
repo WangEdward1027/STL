@@ -2,11 +2,13 @@
 
 #include <string.h>
 #include <iostream> 
+#include <vector>
 using std::cout;
 using std::cin;
 using std::endl;
 using std::ostream;
 using std::istream;
+using std::vector;
 
 class String 
 {
@@ -90,16 +92,16 @@ String & String::operator=(const String & rhs){
 
 //赋值运算符函数  
 String & String::operator=(const char * pstr){
-    if(_pstr){
+    if(_pstr != pstr){
         delete [] _pstr;
+        _pstr = new char[strlen(pstr) + 1]();
+        strcpy(_pstr, pstr);
     }
-    _pstr = new char[strlen(pstr) + 1]();
-    strcpy(_pstr, pstr);
     return *this;
 }
 
 String & String::operator+=(const String & rhs){
-    char * str = new char[strlen(_pstr) + strlen(rhs._pstr) +1]();
+    char * str = new char[strlen(_pstr) + strlen(rhs._pstr) + 1]();
     strcpy(str,_pstr);
     strcat(str,rhs._pstr);
     delete [] _pstr;
@@ -159,6 +161,7 @@ String operator+(const char * pstr, const String & rhs){
     return temp;
 }
 
+//调用者可读可写
 char& String::operator[](size_t index){
     size_t len = strlen(_pstr);
     if(index < len){
@@ -170,6 +173,8 @@ char& String::operator[](size_t index){
     }
 }
 
+//防止外部的调用者修改内容,只能读不能写
+//const对象只能调用这个函数, 返回值是const &,外部调用不能修改其值
 const char& String::operator[](size_t index) const{
     size_t len = strlen(_pstr);
     if(index < len){
@@ -181,13 +186,30 @@ const char& String::operator[](size_t index) const{
     }
 }
 
-ostream &operator<<(ostream &os, const String &s){
-    os << s._pstr;
+ostream &operator<<(ostream &os, const String &rhs){
+    if(rhs._pstr){
+        os << rhs._pstr;
+    }
     return os;
 }
 
-istream &operator>>(istream &is, String &s){
-    is >> s._pstr;
+//输入流运算符
+istream &operator>>(istream &is, String &rhs){
+    if(rhs._pstr){
+        delete [] rhs._pstr;
+        rhs._pstr =nullptr;
+    }
+
+    //动态获取从键盘输入数据的长度
+    vector<char> buffer;
+    char ch;
+    while((ch = is.get()) != '\n'){
+        buffer.push_back(ch);
+    }
+
+    rhs._pstr = new char[buffer.size() + 1]();
+    strncpy(rhs._pstr, &buffer[0], buffer.size());
+    
     return is;
 }
 
