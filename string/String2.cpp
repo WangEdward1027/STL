@@ -1,4 +1,4 @@
-//string类的模拟实现2
+//深拷贝：string类的模拟实现2
 
 #include <string.h>
 #include <iostream> 
