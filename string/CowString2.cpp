@@ -1,6 +1,4 @@
-//String类的模拟实现3：COW写时复制
-//不进行写操作的复制,共享存储空间,使用 浅拷贝+引用计数
-//真正进行写操作时，才进行深拷贝
+//COW写时复制2：代理模式,引入内部类CharProxy,重载[]和<<运算符
 
 #include <string.h>
 #include <iostream>
