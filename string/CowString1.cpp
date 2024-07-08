@@ -104,6 +104,8 @@ CowString & CowString::operator=(const CowString & rhs){
     return *this;
 }
 
+//读操作
+//问题:写操作会把两个String都修改
 /* char & CowString::operator[](size_t idx){ */
 /*     if(idx < size()){ */
 /*         return _pstr[idx]; */
@@ -114,7 +116,8 @@ CowString & CowString::operator=(const CowString & rhs){
 /*     } */
 /* } */
 
-
+//写操作
+//问题:读操作也会深拷贝开辟空间
 char & CowString::operator[](size_t idx){
     if(idx < size()){
         if(use_count() > 1){
