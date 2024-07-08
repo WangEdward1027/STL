@@ -1,4 +1,6 @@
-//COW写时复制3:类型转换函数
+//COW写时复制3:
+//添加了类型转换函数 operator char()
+//添加了CharProxy->CharProxy的赋值运算符重载
 
 #include <string.h>
 #include <iostream>
@@ -19,8 +21,10 @@ private:
         {}
 
         char & operator=(char ch);
-        
-        operator char(){
+        //新增赋值运算符
+        CharProxy & operator=(const CharProxy & rhs);
+
+        operator char() const{
             cout << "类型转换函数 operator char()" << endl;
             return _self._pstr[_idx];
         }
@@ -130,53 +134,14 @@ ostream & operator<<(ostream & os,const CowString & rhs){
     return os;
 }
 
-//读操作
-//问题:写操作会把两个String都修改
-/* char & CowString::operator[](size_t idx){ */
-/*     if(idx < size()){ */
-/*         return _pstr[idx]; */
-/*     }else{ */
-/*         cout << "out of range" << endl; */
-/*         static char nullchar = '\0'; */
-/*         return nullchar; */
-/*     } */
-/* } */
-
-//写操作
-//问题:读操作也会深拷贝开辟空间
-/* char & CowString::operator[](size_t idx){ */
-/*     if(idx < size()){ */
-/*         if(use_count() > 1){ */
-/*             //1.原本空间引用计数-1 */
-/*             decreaseRefCount(); */
-/*             //2.深拷贝 */
-/*             char * temp = malloc(_pstr); */
-/*             strcpy(temp,_pstr); */
-/*             //3.改变指向 */
-/*             _pstr = temp; */
-/*             //4.初始化新空间的引用计数 */
-/*             initRefCount(); */
-/*         } */
-/*         return _pstr[idx]; */
-/*     }else{ */
-/*         cout << "下标超出String的范围,out of range" << endl; */
-/*         static char nullchar = '\0'; */
-/*         return nullchar; */
-/*     } */
-/* } */
-
-//下标访问运算符的重载,装不下读写两种操作。改造为代理模式
-//str1[0]需要返回一个CharProxy对象,只能利用str1对象和下标0来进行创建
-//所以CharProxy的构造函数写成如下形式:
-//str1[0] = 'H'，需要给CharProxy定义赋值运算符函数
-//cout << str1[0] << endl; 需要给CharProxy重载输出流运算符函数
-//CharProxy类需要设计一个CowString引用,向上绑定str1对象
-//以及一个size_t的数据成员保存下标值
+//下标访问运算符的重载，改造为代理模式
 CowString::CharProxy CowString::operator[](size_t idx){
     return CharProxy(*this, idx); //*this就是str1本身
 }
 
+//写时复制
 char & CowString::CharProxy::operator=(char ch){
+    cout << "写时复制 char & CowString::CharProxy::operator=(char ch)" << endl;
     if(_idx < _self.size()){ 
         if(_self.use_count() > 1){
             //1.原本空间引用计数-1
@@ -199,6 +164,16 @@ char & CowString::CharProxy::operator=(char ch){
     }
 }
 
+CowString::CharProxy & CowString::CharProxy::operator=(const CharProxy & rhs){
+    if(&_self != &rhs._self || _idx != rhs._idx){
+        char ch = rhs; //类型转换函数
+        *this = ch;    //char的赋值运算符
+    }else{
+        cout << "自复制" << endl;
+    }
+    return *this;
+}
+
 ostream & operator<<(ostream & os, const CowString::CharProxy & rhs){
     if(rhs._idx < rhs._self.size()){
         os << rhs._self._pstr[rhs._idx];
@@ -208,68 +183,46 @@ ostream & operator<<(ostream & os, const CowString::CharProxy & rhs){
     return os;
 }
 
-//测试引用计数
-void test0(){
-    CowString str1;
-    CowString str2 = str1;
-    cout << "str1:" << str1 << endl;
-    cout << "str2:" << str2 << endl;
-    cout << str1.use_count() << endl;
-    cout << str2.use_count() << endl;
-    cout << endl;
-    
-    CowString str3("hello");
-    CowString str4 = str3;
-    cout << "str3:" << str3 << endl;
-    cout << "str4:" << str4 << endl;
-    cout << str3.use_count() << endl;
-    cout << str4.use_count() << endl;
-    cout << endl;
-    
-    str2 = str3;
-    cout << "str1:" << str1 << endl;
-    cout << "str2:" << str2 << endl;
-    cout << "str3:" << str3 << endl;
-    cout << "str4:" << str4 << endl;
-    cout << str1.use_count() << endl;
-    cout << str2.use_count() << endl;
-    cout << str3.use_count() << endl;
-    cout << str4.use_count() << endl;
-}
-
 void test1(){
-    CowString str1("hello");
+    CowString str1 = "hello";
+    cout << str1 << endl;
     CowString str2 = str1;
-    cout << str2[0] << endl;
-    /* str2[0] = 'H'; */
-    cout << "str1:" << str1 << endl;
-    cout << "str2:" << str2 << endl;
+    cout << str2 << endl;
     cout << str1.use_count() << endl;
     cout << str2.use_count() << endl;
+    cout << endl;
+
+    str1[0] = 'H';  
+    cout << str1 << endl;
+    char c = str1[0]; //类型转换函数:CharProxy->char 
+    cout << "c:" << c << endl;
+    cout << str2 << endl;
+    cout << str1.use_count() << endl;
+    cout << str2.use_count() << endl;
+    cout << endl;
+
+    str2[0] = str1[0];  //CharProxy赋值给CharProxy,右边的CharProxy先转换为char
+    cout << str1 << endl;
+    cout << str2 << endl;
+    cout << str1.use_count() << endl;
+    cout << str2.use_count() << endl;
+    cout << endl;
 }
 
 void test2(){
     CowString str1 = "hello";
-    cout << str1 << endl;
-
-    CowString str2 = str1;
-    cout << str2 << endl;
-    cout << str1.use_count() << endl;
-    cout << str2.use_count() << endl;
-
-    str1[0] = 'H';  //类型转换函数:CharProxy->char
-    char c = str1[0];  
-    cout << "c:" << c << endl;
-    cout << str1 << endl;
-    cout << str2 << endl;
-    cout << str1.use_count() << endl;
-    cout << str2.use_count() << endl;
- 
+    str1 = str1;
+    CowString str2 = "Hello";
     str2[0] = str1[0];
+    cout << str2 << endl;
+    cout << endl;
 
+    str1[0] = str1[0];
+    cout << str1 << endl;
 }
 
 int main(void){
+    /* test1(); */
     test2();
     return 0;
 }
