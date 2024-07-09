@@ -23,14 +23,15 @@ private:
         //1.写时复制:左值是CharProxy,右值是char
         char & operator=(char ch);
        
-        //2.左值是CharProxy,右值也是CharProxy
-        char & operator=(const CharProxy & rhs);
-       
-        //3.类型转换函数:左值是char,右值是CharProxy
+        //2.类型转换函数:左值是char,右值是CharProxy
         operator char() const{
             cout << "类型转换函数 operator char()" << endl;
             return _self._pstr[_idx];
         }
+
+        //3.左值是CharProxy,右值也是CharProxy
+        char & operator=(const CharProxy & rhs);
+       
 
         friend  //2.也要声明为内部类的友元函数
         ostream & operator<<(ostream & os, const CharProxy & rhs);
@@ -145,6 +146,7 @@ CowString::CharProxy CowString::operator[](size_t idx){
     return CharProxy(*this, idx); //*this就是str1本身
 }
 
+//CharProxy中的赋值运算符函数1:右操作数是char
 //写时复制
 char & CowString::CharProxy::operator=(char ch){
     cout << "写时复制 char & CowString::CharProxy::operator=(char ch)" << endl;
@@ -170,12 +172,12 @@ char & CowString::CharProxy::operator=(char ch){
     }
 }
 
-//CharProxy中的赋值运算符函数
+//CharProxy中的赋值运算符函数2:右操作数是CharProxy
 char & CowString::CharProxy::operator=(const CowString::CharProxy & rhs){
     if(&_self != &rhs._self || _idx != rhs._idx){  // 检查是否为自复制
         // _self._pstr[_idx] = rhs._self._pstr[_idx]; //不可以单纯这样修改,会跳过写时复制的逻辑
-        char ch = rhs;  //调用类型转换函数
-        *this = ch;     //写时复制
+        char ch = rhs;  //1.调用类型转换函数
+        *this = ch;     //2.调用写时复制
     }else{
         cout << "自复制" << endl;
     }
@@ -242,6 +244,8 @@ void test3(){
 }
 
 int main(void){
+    /* test1(); */
+    /* test2(); */
     test3();
     return 0;
 }
