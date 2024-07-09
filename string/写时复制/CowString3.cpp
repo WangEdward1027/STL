@@ -1,6 +1,6 @@
 //COW写时复制3:
-//添加了类型转换函数 operator char()
-//添加了CharProxy->CharProxy的赋值运算符重载
+//1.添加了CharProxy->CharProxy的赋值运算符重载
+//2.添加了类型转换函数 operator char()
 
 #include <string.h>
 #include <iostream>
@@ -19,15 +19,19 @@ private:
         : _self(self)
         , _idx(idx)
         {}
-
+        
+        //1.写时复制:左值是CharProxy,右值是char
         char & operator=(char ch);
-        //新增赋值运算符
-        CharProxy & operator=(const CharProxy & rhs);
-
+       
+        //2.左值是CharProxy,右值也是CharProxy
+        char & operator=(const CharProxy & rhs);
+       
+        //3.类型转换函数:左值是char,右值是CharProxy
         operator char() const{
             cout << "类型转换函数 operator char()" << endl;
             return _self._pstr[_idx];
         }
+
         friend  //2.也要声明为内部类的友元函数
         ostream & operator<<(ostream & os, const CharProxy & rhs);
     private:
@@ -120,8 +124,10 @@ CowString & CowString::operator=(const CowString & rhs){
         release();   //2.尝试回收堆空间
         _pstr = rhs._pstr;  //3.浅拷贝
         increaseRefCount(); //4.新的空间引用计数+1
+    }else{
+        cout << "自复制" << endl;
     }
-    return *this;
+    return *this; //5.返回本对象
 }
 
 //友元函数形式重载输入流运算符
@@ -164,14 +170,16 @@ char & CowString::CharProxy::operator=(char ch){
     }
 }
 
-CowString::CharProxy & CowString::CharProxy::operator=(const CharProxy & rhs){
-    if(&_self != &rhs._self || _idx != rhs._idx){
-        char ch = rhs; //类型转换函数
-        *this = ch;    //char的赋值运算符
+//CharProxy中的赋值运算符函数
+char & CowString::CharProxy::operator=(const CowString::CharProxy & rhs){
+    cout << "CharProxy->CharProxy赋值运算符" << endl;
+    if(&_self != &rhs._self || _idx != rhs._idx){  // 检查是否为自复制
+        char ch = rhs;  //调用类型转换函数
+        *this = ch;     //写时复制
     }else{
         cout << "自复制" << endl;
     }
-    return *this;
+    return _self._pstr[_idx];  //赋值完成后,左操作数对应的char
 }
 
 ostream & operator<<(ostream & os, const CowString::CharProxy & rhs){
@@ -212,6 +220,8 @@ void test1(){
 void test2(){
     CowString str1 = "hello";
     str1 = str1;
+    cout << endl;
+
     CowString str2 = "Hello";
     str2[0] = str1[0];
     cout << str2 << endl;
@@ -222,7 +232,8 @@ void test2(){
 }
 
 int main(void){
-    /* test1(); */
-    test2();
+    test1();
+    /* cout << "--------------------------" << endl; */
+    /* test2(); */
     return 0;
 }
