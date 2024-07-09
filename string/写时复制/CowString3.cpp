@@ -172,8 +172,8 @@ char & CowString::CharProxy::operator=(char ch){
 
 //CharProxy中的赋值运算符函数
 char & CowString::CharProxy::operator=(const CowString::CharProxy & rhs){
-    cout << "CharProxy->CharProxy赋值运算符" << endl;
     if(&_self != &rhs._self || _idx != rhs._idx){  // 检查是否为自复制
+        // _self._pstr[_idx] = rhs._self._pstr[_idx]; //不可以单纯这样修改,会跳过写时复制的逻辑
         char ch = rhs;  //调用类型转换函数
         *this = ch;     //写时复制
     }else{
@@ -231,9 +231,17 @@ void test2(){
     cout << str1 << endl;
 }
 
+void test3(){
+    CowString str1 = "hello";
+    CowString str2 = str1;
+    cout << str2 << endl;
+    CowString str3 = "He";
+    str1[0] = str3[0];
+    cout << str1 << endl;
+    cout << str2 << endl;
+}
+
 int main(void){
-    test1();
-    /* cout << "--------------------------" << endl; */
-    /* test2(); */
+    test3();
     return 0;
 }
