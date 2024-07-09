@@ -1,6 +1,6 @@
 //COW写时复制3:
-//1.添加了CharProxy->CharProxy的赋值运算符重载
-//2.添加了类型转换函数 operator char()
+//1.添加了类型转换函数 operator char()
+//2.添加了CharProxy->CharProxy的赋值运算符重载
 
 #include <string.h>
 #include <iostream>
