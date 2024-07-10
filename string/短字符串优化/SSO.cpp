@@ -72,30 +72,6 @@ char & String::operator[](size_t idx){
     cout << "operator[](size_t idx)" << endl;
 }
 
-/* //成员函数重载 */
-/* char & String::operator[](size_t idx){ */
-/*     if(_size <= 15){ */
-/*         size_t len = strlen(_buffer._local); */
-/*         if(idx < len){ */
-/*             return _buffer._local[idx]; */
-/*         }else{ */
-/*             cout << "out of _local range" << endl; */
-/*             static char nullchar = '\0'; */
-/*             return nullchar; */
-/*         } */
-/*     }else{ //_size > 15 */
-/*         size_t len = strlen(_buffer._pointer); */
-/*         if(idx < len){ */
-/*             return _buffer._pointer[idx]; */
-/*         }else{ */
-/*             cout << "out of _pointer range" << endl; */
-/*             static char nullchar = '\0'; */
-/*             return nullchar; */
-/*         } */
-/*     } */
-/*     cout << "operator[](size_t idx)" << endl; */
-/* } */
-
 //友元函数重载
 ostream & operator<<(ostream & os,const String & rhs){
     if(rhs._size > 15){
