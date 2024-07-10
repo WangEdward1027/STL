@@ -1,6 +1,7 @@
 //String类的模拟实现3：COW写时复制
-//用已经存在的string去给别的string赋值,共享存储空间,使用 浅拷贝+引用计数
+//用已经存在的string去给别的string赋值,共享存储空间,使用 浅拷贝+引用计数 
 //真正进行写操作时，才进行深拷贝
+//引用计数的偏移量：静态常量数据成员
 
 #include <string.h>
 #include <iostream>
@@ -59,7 +60,7 @@ private:
         }
     }
 private:
-    static const int kRefCountLength = 4;
+    static const int kRefCountLength = 4; //静态常量数据成员
     char * _pstr;
 };
 
