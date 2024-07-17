@@ -1,4 +1,4 @@
-//list的插入与删除
+//list的四种插入与删除
 
 #include <iostream> 
 #include <list>
