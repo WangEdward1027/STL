@@ -1,6 +1,7 @@
 //LRUCache:
 //1.插入时,若容量已满.删除最久未访问的元素
 //2.若访问,则将该键值对设为最新
+//该版本的get和put是O(n)级别的,需要遍历链表来找key
 
 #include <iostream> 
 #include <list>
@@ -57,7 +58,6 @@ public:
 private:
     size_t _capacity;
     list<pair<int,int>> _ls; //维护LRU的顺序
-    unordered_map<int, list<pair<int,int>>::iterator> cache;//哈希表,快速检索key值是否存在
 };
 
 int main()
