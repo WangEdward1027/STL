@@ -1,4 +1,4 @@
-//list的特殊操作:
+//list的五种特殊操作:这里是前4种
 //反转reverse、排序sort、去重unique、合并merge、移动splice
 //splice有三种,放在另一个cpp里了
 
