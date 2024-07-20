@@ -43,7 +43,20 @@ void test2(){
 //一元函数和一元断言都用lamb表达式
 void test3(){
     vector<int> vec = {1,2,3,4,5,6,7,8,9,10};
-    auto it = remove_if(vec.begin(), vec.end(), [](int value)->bool{ return value % 2 == 0; });
+    auto it = remove_if(vec.begin(), vec.end(), [](int value)->bool{
+                        return value > 5;
+                        });
+    vec.erase(it, vec.end());
+
+    for_each(vec.begin(), vec.end(), [](int value){ cout << value << " ";});
+    cout << endl;
+}
+
+//一元函数和一元断言都用lamb表达式
+void test4(){
+    vector<int> vec = {1,2,3,4,5,6,7,8,9,10};
+    //lambda表达式可省略函数返回值类型,编译器会根据return语句自动推导
+    auto it = remove_if(vec.begin(), vec.end(), [](int value){ return value % 2 == 0; });
     vec.erase(it, vec.end());
 
     for_each(vec.begin(), vec.end(), [](int value){ cout << value << " ";});
@@ -55,5 +68,6 @@ int main()
     /* test(); */   
     /* test2(); */   
     test3();   
+    test4();   
     return 0;
 }
