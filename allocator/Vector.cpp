@@ -29,14 +29,16 @@ public:
         if(_finish == _end_of_storage){
             reallocate();
         }
-        _alloc.construct(_finish, value);
-        ++_finish;
+        /* _alloc.construct(_finish, value); */
+        /* _finish++; */
+        _alloc.construct(_finish++, value);
     }   
 
     void pop_back(){
         if(_finish != _start){
-            --_finish;
-            _alloc.destroy(_finish);
+            /* --_finish; */
+            /* _alloc.destroy(_finish); */
+            _alloc.destroy(--_finish);
         }
     }         
     
@@ -55,11 +57,13 @@ private:
         int old_capacity = capacity();
         int new_capacity = old_capacity==0 ? 1 : 2*old_capacity;
         
-        //新指针
+        //临时指针
         T* new_start = _alloc.allocate(new_capacity);
         T* new_finish = new_start;
     
         //将旧空间的元素移动到新申请的空间
+        /* uninitialized_copy(_start, _finish, new_start); */
+        
         for(T* it = _start; it != _finish; ++it){
             _alloc.construct(new_finish++, std::move(*it));
             _alloc.destroy(it);
@@ -70,7 +74,7 @@ private:
             _alloc.deallocate(_start, old_capacity);
         }
         
-        //赋值
+        //三个指针置位,与新空间产生联系
         _start = new_start;
         _finish = new_finish;
         _end_of_storage = _start + new_capacity;
@@ -89,17 +93,37 @@ private:
     T *_end_of_storage;        //指向数组本身之后的位置 
 };
 
-// 在类外部定义静态成员变量
+//静态数据成员要在类外进行初始化
 template<typename T>
 std::allocator<T> Vector<T>::_alloc; //无参构造空间配置器对象
+
+template<typename T>
+void printVector(const Vector<T> & con){
+    cout << "size() = " << con.size() << endl;
+    cout << "capacity() = " << con.capacity() << endl;
+    cout << endl;
+}
+
 
 int main()
 {
     Vector<int> vec;
+    printVector(vec);
+    
     vec.push_back(1);   
+    printVector(vec);
+    
     vec.push_back(2);   
-    cout << vec.size() << endl;
-    cout << vec.capacity() << endl;
+    printVector(vec);
 
+    vec.push_back(3);   
+    printVector(vec);
+    
+    vec.push_back(4);   
+    printVector(vec);
+
+    vec.push_back(5);   
+    printVector(vec);
+  
     return 0;
 }
