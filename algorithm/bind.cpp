@@ -1,4 +1,5 @@
 //bind、bind1st、bind2nd
+    /* printf("%p\n", &main); */
 
 #include <iostream>
 #include <vector>
@@ -8,6 +9,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::bind;
+using std::function;
 using namespace std::placeholders;
 
 //使用bind1st
@@ -65,8 +67,14 @@ int add(int x, int y, int z){
 //bind绑定普通函数
 void test4(){
     //bind: 固定第一个参数,并保留两个占位符
-    auto func = bind(add, 100, _1, _2);
-    cout << func(10,1) << endl;
+    /* auto func = bind(add, 100, _2, _3); */
+    //用function<> 还原auto的类型
+    function<int(int,int,int)> func = bind(add, 100, _2, _3);
+    cout << func(666,10,1) << endl;
+    function<int(int,int)> func2 = bind(add, 200, _1, _2);
+    cout << func2(20,2) << endl;
+    function<int(int)> func3 = bind(add, 300, _1, _1);
+    cout << func3(10) << endl;
 }
 
 int main()
