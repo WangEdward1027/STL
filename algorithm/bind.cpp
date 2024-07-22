@@ -68,7 +68,7 @@ int add(int x, int y, int z){
 void test4(){
     //bind: 固定第一个参数,并保留两个占位符
     /* auto func = bind(add, 100, _2, _3); */
-    //用function<> 还原auto的类型
+    //bind的返回类型: 用function<> 还原auto推导的 bind绑定后函数类型
     function<int(int,int,int)> func = bind(add, 100, _2, _3);
     cout << func(666,10,1) << endl;
     function<int(int,int)> func2 = bind(add, 200, _1, _2);
