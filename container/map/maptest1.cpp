@@ -19,6 +19,7 @@ void test()
 
     //插入
     addressBook.insert({"Chole", 15677750000});
+    addressBook["Windy"] = 19145720000;
 
     //遍历
     for(auto &elem : addressBook){
