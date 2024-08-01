@@ -9,9 +9,27 @@
 4.list <br>
 5.set <br>
 6.map <br>
-<br>
-二、迭代器 <br>
 
+<br>
+
+二、迭代器 <br>
+1.iterator <br>
+
+<br>
 
 三、算法 <br>
+1.bind <br>
+
+<br>
+
+四、适配器 <br>
+
+<br>
+
+五、函数对象 <br>
+1.function <br>
+
+ <br>
  
+六、空间配置器
+1.allocator <br>
