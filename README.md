@@ -19,6 +19,8 @@
 
 三、算法 <br>
 1.bind <br>
+2.for_each <br>
+3.remove_if <br>
 
 <br>
 
@@ -31,5 +33,5 @@
 
  <br>
  
-六、空间配置器
+六、空间配置器 <br>
 1.allocator <br>
